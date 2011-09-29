@@ -19,19 +19,19 @@ CLEAN.include(OBJ.keys, BUILDDIR, PROG)
 
 # Some toolchain info.
 TARGET = {
-	:compiler => 'avr-gcc',
-	:compiler_args => [
-		'-DTARGET',
-		'-DF_CPU=16000000UL',
-		'-mmcu=atmega328p',
-		'-Wall',
-		'-Os',
-		'-c'
-	],
-	:linker => 'avr-gcc',
-	:linker_args => [
-		'-mmcu=atmega328p'
-	],
+  :compiler => 'avr-gcc',
+  :compiler_args => [
+    '-DTARGET',
+    '-DF_CPU=16000000UL',
+    '-mmcu=atmega328p',
+    '-Wall',
+    '-Os',
+    '-c'
+  ],
+  :linker => 'avr-gcc',
+  :linker_args => [
+    '-mmcu=atmega328p'
+  ],
   :objcopy => 'avr-objcopy'
 }
 
@@ -48,27 +48,27 @@ namespace :target do
     sh "#{cc} #{args} -o #{t.name} #{t.source}"
   end
 
-	desc "Build the project for the Arduino"
-	task :build => OBJ.keys
+  desc "Build the project for the Arduino"
+  task :build => OBJ.keys
 
-	desc "Link the built project for the Arduino"
-	task :link => :build do
+  desc "Link the built project for the Arduino"
+  task :link => :build do
     ld = TARGET[:linker]
-		args = TARGET[:linker_args].join(" ")
+    args = TARGET[:linker_args].join(" ")
     objs = OBJ.keys
-		sh "#{ld} #{args} #{objs} -o #{PROG}.bin"
-	end
+    sh "#{ld} #{args} #{objs} -o #{PROG}.bin"
+  end
 
-	desc "Convert the output binary to a hex file for programming to the Arduino"
-	task :convert => :link do
+  desc "Convert the output binary to a hex file for programming to the Arduino"
+  task :convert => :link do
     objcopy = TARGET[:objcopy]
-		sh "#{objcopy} -O ihex -R .eeprom #{PROG}.bin #{PROG}.hex"
-	end
+    sh "#{objcopy} -O ihex -R .eeprom #{PROG}.bin #{PROG}.hex"
+  end
 
-	desc "Program the Arduino over the serial port."
-	task :program => :convert do
-		sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
-	end
+  desc "Program the Arduino over the serial port."
+  task :program => :convert do
+    sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
+  end
 
   desc "Make a backup hex image of the flash contents."
   task :backup, :backup_name do |t, args|
