@@ -1,6 +1,6 @@
 require 'rake/clean'
 
-SERIAL_PORT = '/dev/tty.usbmodemfd121'
+SERIAL_PORT = ENV['SERIAL_PORT'] ? ENV['SERIAL_PORT'] : '/dev/tty.usbmodemfd121'
 PROG = 'scaffold'
 SRCDIR = 'src'
 BUILDDIR = 'build'
