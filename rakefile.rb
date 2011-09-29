@@ -5,14 +5,22 @@ PROG = 'scaffold'
 SRCDIR = 'src'
 BUILDDIR = 'build'
 SRC = FileList["#{SRCDIR}/**/*.c"]
-OBJ = SRC.collect { |fn| File.join(BUILDDIR, fn.ext('o')) }
 
-CLEAN.include(OBJ, BUILDDIR, PROG, FileList["#{BUILDDIR}/**/*.o"])
+# Create a mapping from objects
+# to source files.
+OBJ = SRC.inject({}) do |cont, s|
+  obj_file = File.join(BUILDDIR, s.ext('o'))
+  cont[obj_file] = s
+  cont
+end
 
+# Setup what should be cleaned.
+CLEAN.include(OBJ.keys, BUILDDIR, PROG)
+
+# Some toolchain info.
 TARGET = {
 	:compiler => 'avr-gcc',
-	:linker   => 'avr-gcc',
-	:c_args   => [
+	:compiler_args => [
 		'-DTARGET',
 		'-DF_CPU=16000000UL',
 		'-mmcu=atmega328p',
@@ -20,45 +28,50 @@ TARGET = {
 		'-Os',
 		'-c'
 	],
-	:l_args   => [
+	:linker => 'avr-gcc',
+	:linker_args => [
 		'-mmcu=atmega328p'
-	]
-}
-HOST = {
-	:compiler => 'gcc',
-	:linker   => 'gcc',
-	:c_args   => [
-		'-DHOST',
-		'-Wall',
-		'-O',
-		'-c'
-	]
+	],
+  :objcopy => 'avr-objcopy'
 }
 
-task :default => [:release]
-task :release => ['target:program']
+# Map the default task to the chip programming task
+task :default => ['target:program']
 
 namespace :target do
+  # Define tasks to make .o files from .c files
+  # using the mapping deined in the OBJ hash.
+  rule '.o' => lambda { |tn| OBJ[tn] } do |t|
+    sh "mkdir -p #{File.dirname(t.name)}"
+    cc = TARGET[:compiler]
+    args = TARGET[:compiler_args].join(" ")
+    sh "#{cc} #{args} -o #{t.name} #{t.source}"
+  end
+
 	desc "Build the project for the Arduino"
-	task :build do
-		puts SRC.inspect
-		puts OBJ.inspect
-	end
+	task :build => OBJ.keys
 
 	desc "Link the built project for the Arduino"
 	task :link => :build do
-		args = TARGET[:l_args].join(" ")
-		objs = "oops.o"
-		sh "avr-gcc #{args} #{objs} -o #{PROG}.bin"
+    ld = TARGET[:linker]
+		args = TARGET[:linker_args].join(" ")
+    objs = OBJ.keys
+		sh "#{ld} #{args} #{objs} -o #{PROG}.bin"
 	end
 
 	desc "Convert the output binary to a hex file for programming to the Arduino"
 	task :convert => :link do
-		sh "avr-objcopy -O ihex -R .eeprom #{PROG}.bin #{PROG}.hex"
+    objcopy = TARGET[:objcopy]
+		sh "#{objcopy} -O ihex -R .eeprom #{PROG}.bin #{PROG}.hex"
 	end
 
 	desc "Program the Arduino over the serial port."
 	task :program => :convert do
 		sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
 	end
+
+  desc "Make a backup hex image of the flash contents."
+  task :backup, :backup_name do |t, args|
+    sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:r:#{args.backup_name}:i"
+  end
 end

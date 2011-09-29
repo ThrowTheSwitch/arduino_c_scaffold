@@ -1,1 +1,4 @@
 .*.swp
+build/
+scaffold.bin
+scaffold.hex
