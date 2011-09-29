@@ -2,3 +2,11 @@ The easy-to-read examples provided on the following site were a big help in sett
 this up quickly. The blink program originally used in src/main.c was borrowed from
 this page.
   http://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/
+
+Usage:
+
+$ rake -T # see all tasks
+$ rake # build the project, flash to the arduino
+$ rake clobber # clean the project
+$ rake SERIAL_PORT=/dev/ttyS99999 # use a different serial port
+$ rake target:backup[backup.hex] # dump the flash from the target into backup.hex
