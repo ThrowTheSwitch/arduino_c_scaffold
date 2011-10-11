@@ -1,8 +1,3 @@
-The easy-to-read examples provided on the following site were a big help in setting
-this up quickly. The blink program originally used in src/main.c was borrowed from
-this page.
-  http://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/
-
 Usage:
 
 $ rake -T # see all tasks
