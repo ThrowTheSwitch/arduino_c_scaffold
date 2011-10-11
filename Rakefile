@@ -24,6 +24,7 @@ TARGET = {
     '-DTARGET',
     '-DF_CPU=16000000UL',
     '-mmcu=atmega328p',
+    '-Iinclude/',
     '-Wall',
     '-Os',
     '-c'
@@ -48,8 +49,20 @@ namespace :target do
     sh "#{cc} #{args} -o #{t.name} #{t.source}"
   end
 
+  # Define tasks to make preprocessed sources from
+  # c files.
+  rule '.e' => lambda { |tn| OBJ[tn.ext('o')] } do |t|
+    sh "mkdir -p #{File.dirname(t.name)}"
+    cc = TARGET[:compiler]
+    args = TARGET[:compiler_args].join(" ")
+    sh "#{cc} -E #{args} -o #{t.name} #{t.source}"
+  end
+
   desc "Build the project for the Arduino"
   task :build => OBJ.keys
+
+  desc "Generate the preprocessed source files"
+  task :preprocess => OBJ.keys.map {|o| o.ext('.e')}
 
   desc "Link the built project for the Arduino"
   task :link => :build do
