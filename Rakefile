@@ -15,7 +15,7 @@ OBJ = SRC.inject({}) do |cont, s|
 end
 
 # Setup what should be cleaned.
-CLEAN.include(OBJ.keys, BUILDDIR, PROG)
+CLEAN.include(OBJ.keys, BUILDDIR, "#{PROG}.bin", "#{PROG}.hex")
 
 # Some toolchain info.
 TARGET = {
