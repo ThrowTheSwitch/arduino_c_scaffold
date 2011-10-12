@@ -1,7 +1,7 @@
 require 'rake/clean'
 require 'fileutils'
 
-SERIAL_PORT = ENV['SERIAL_PORT'] ? ENV['SERIAL_PORT'] : '/dev/tty.usbmodemfd121'
+SERIAL_PORT = ENV['SERIAL_PORT']
 PROG = 'scaffold'
 SRCDIR = 'src'
 BUILDDIR = 'build'
@@ -39,6 +39,15 @@ TARGET = {
 
 # Map the default task to the chip programming task
 task :default => ['target:program']
+
+# Dummy task to ensure that the SERIAL_PORT environment variable is set.
+# It can be set on the command line as follows:
+#   $ rake SERIAL_PORT=[serial port name]
+task :serial_port do
+  unless ENV['SERIAL_PORT']
+    raise "SERIAL_PORT is not defined in the environment!"
+  end
+end
 
 namespace :target do
   # Define tasks to make .o files from .c files
@@ -80,12 +89,12 @@ namespace :target do
   end
 
   desc "Program the Arduino over the serial port."
-  task :program => :convert do
+  task :program => [:convert, :serial_port] do
     sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
   end
 
   desc "Make a backup hex image of the flash contents."
-  task :backup, :backup_name do |t, args|
+  task :backup, [:backup_name] => :serial_port do |t, args|
     sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:r:#{args.backup_name}:i"
   end
 end
