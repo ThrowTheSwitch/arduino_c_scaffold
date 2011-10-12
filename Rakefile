@@ -1,4 +1,5 @@
 require 'rake/clean'
+require 'fileutils'
 
 SERIAL_PORT = ENV['SERIAL_PORT'] ? ENV['SERIAL_PORT'] : '/dev/tty.usbmodemfd121'
 PROG = 'scaffold'
@@ -43,7 +44,7 @@ namespace :target do
   # Define tasks to make .o files from .c files
   # using the mapping deined in the OBJ hash.
   rule '.o' => lambda { |tn| OBJ[tn] } do |t|
-    sh "mkdir -p #{File.dirname(t.name)}"
+    FileUtils.mkdir_p(File.dirname(t.name))
     cc = TARGET[:compiler]
     args = TARGET[:compiler_args].join(" ")
     sh "#{cc} #{args} -o #{t.name} #{t.source}"
@@ -52,7 +53,7 @@ namespace :target do
   # Define tasks to make preprocessed sources from
   # c files.
   rule '.e' => lambda { |tn| OBJ[tn.ext('o')] } do |t|
-    sh "mkdir -p #{File.dirname(t.name)}"
+    FileUtils.mkdir_p File.dirname(t.name)
     cc = TARGET[:compiler]
     args = TARGET[:compiler_args].join(" ")
     sh "#{cc} -E #{args} -o #{t.name} #{t.source}"
