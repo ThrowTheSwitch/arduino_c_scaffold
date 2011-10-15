@@ -78,7 +78,7 @@ namespace :target do
   task :link => :build do
     ld = TARGET[:linker]
     args = TARGET[:linker_args].join(" ")
-    objs = OBJ.keys
+    objs = OBJ.keys.join(" ")
     sh "#{ld} #{args} #{objs} -o #{PROG}.bin"
   end
 
