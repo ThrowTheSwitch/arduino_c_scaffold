@@ -69,7 +69,13 @@ $ sudo brew install https://raw.github.com/larsimmisch/homebrew-alt/7d774c6b15da
 
 ### Linux
 
-TBD
+Getting the environment up and running on Ubuntu Linux is quite simple. One
+need only install 4 packages. These are all supported in the Ubuntu package
+manager. Open a terminal and run the following command:
+
+```bash
+$ sudo apt-get install binutils-avr avr-libc avrdude gcc-avr
+```
 
 ## Building and Running the Sample Project
 
