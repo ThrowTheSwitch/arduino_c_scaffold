@@ -1,6 +1,9 @@
 require 'rake/clean'
 require 'fileutils'
 
+MCU = ENV['MCU'] || 'atmega328p'
+PARTNO = ENV['PARTNO'] || MCU
+F_CPU = ENV['F_CPU'] || '16000000UL'
 SERIAL_PORT = ENV['SERIAL_PORT']
 PROG = 'scaffold'
 SRCDIR = 'src'
@@ -23,8 +26,8 @@ TARGET = {
   :compiler => 'avr-gcc',
   :compiler_args => [
     '-DTARGET',
-    '-DF_CPU=16000000UL',
-    '-mmcu=atmega328p',
+    "-DF_CPU=#{F_CPU}",
+    "-mmcu=#{MCU}",
     '-Iinclude/',
     '-Wall',
     '-Os',
@@ -32,7 +35,7 @@ TARGET = {
   ],
   :linker => 'avr-gcc',
   :linker_args => [
-    '-mmcu=atmega328p'
+    "-mmcu=#{MCU}"
   ],
   :objcopy => 'avr-objcopy'
 }
@@ -90,11 +93,11 @@ namespace :target do
 
   desc "Program the Arduino over the serial port."
   task :program => [:convert, :serial_port] do
-    sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
+    sh "avrdude -F -V -c arduino -p #{PARTNO} -P #{SERIAL_PORT} -b 115200 -U flash:w:#{PROG}.hex"
   end
 
   desc "Make a backup hex image of the flash contents."
   task :backup, [:backup_name] => :serial_port do |t, args|
-    sh "avrdude -F -V -c arduino -p ATMEGA328P -P #{SERIAL_PORT} -b 115200 -U flash:r:#{args.backup_name}:i"
+    sh "avrdude -F -V -c arduino -p #{PARTNO} -P #{SERIAL_PORT} -b 115200 -U flash:r:#{args.backup_name}:i"
   end
 end
