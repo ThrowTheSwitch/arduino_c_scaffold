@@ -22,7 +22,7 @@ void configure(void)
   TCCR0B = _BV(CS00) | _BV(CS01);
 
   /* enable the TIMER0 overflow interrupt */
-  TIMSK0 = _BV(TOIE0);
+  TIMSK0 = _BV(TOIE0); // TIMSK in ATTiny
 
   /* set the initial timer counter value. */
   TCNT0 = TIMER_RESET_VAL;
@@ -58,8 +58,7 @@ ISR(TIMER0_OVF_vect)
 {
   /* preload the timer. */
   TCNT0 = TIMER_RESET_VAL;
-  
+
   /* call our periodic task. */
   task();
 }
-
