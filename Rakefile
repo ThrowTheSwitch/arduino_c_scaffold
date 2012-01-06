@@ -13,7 +13,7 @@ PROGRAMMER = ENV['PROGRAMMER'] || 'arduino' # usbasp
 SERIAL_PORT = ENV['SERIAL_PORT'] || nil
 
 # Arduino Uno 115200 | Duemilanove 57600
-BAUDS = 115200 # 57600
+BAUDS = ENV['BAUDS'] || 115200 # 57600
 F_CPU = ENV['F_CPU'] || '16000000UL'
 
 # Paths
@@ -52,15 +52,6 @@ TARGET = {
 
 # Map the default task to the chip programming task
 task :default => ['target:program']
-
-# Dummy task to ensure that the SERIAL_PORT environment variable is set.
-# It can be set on the command line as follows:
-#   $ rake SERIAL_PORT=[serial port name]
-task :serial_port do
-  unless ENV['SERIAL_PORT'] || ENV['PROGRAMMER']
-    raise "SERIAL_PORT is not defined in the environment!"
-  end
-end
 
 namespace :target do
   # Define tasks to make .o files from .c files
@@ -102,12 +93,12 @@ namespace :target do
   end
 
   desc "Program the Arduino over the serial port."
-  task :program => [:convert, :serial_port] do
+  task :program => [:convert] do
     sh "avrdude -F -V -c #{PROGRAMMER} -p #{PARTNO} #{SERIAL_PORT ? '-P ' + SERIAL_PORT : nil} -b #{BAUDS} -U flash:w:#{PROG}.hex"
   end
 
   desc "Make a backup hex image of the flash contents."
-  task :backup, [:backup_name] => :serial_port do |t, args|
+  task :backup, [:backup_name] do |t, args|
     sh "avrdude -F -V -c #{PROGRAMMER} -p #{PARTNO} #{SERIAL_PORT ? '-P ' + SERIAL_PORT : nil} -b #{BAUDS} -U flash:r:#{args.backup_name}:i"
   end
 end
