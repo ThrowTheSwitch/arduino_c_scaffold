@@ -10,7 +10,8 @@ PARTNO = ENV['PARTNO'] || MCU
 
 # Flash burner
 PROGRAMMER = ENV['PROGRAMMER'] || 'arduino' # usbasp
-SERIAL_PORT = ENV['SERIAL_PORT'] || nil
+SERIAL_PORT = ENV['SERIAL_PORT'] ||  Dir.glob(
+      "/dev/tty#{RUBY_PLATFORM =~ /linux/ ? 'USB' : '.usbmodel'}").first
 
 # Arduino Uno 115200 | Duemilanove 57600
 BAUDS = ENV['BAUDS'] || 115200 # 57600
@@ -86,7 +87,7 @@ namespace :target do
     sh "#{ld} #{args} #{objs} -o #{PROG}.bin"
   end
 
-  desc "Convert the output binary to a hex file for programming to the Arduino"
+  desc "Convert the output binary to a hex file."
   task :convert => :link do
     objcopy = TARGET[:objcopy]
     sh "#{objcopy} -O ihex -R .eeprom #{PROG}.bin #{PROG}.hex"
