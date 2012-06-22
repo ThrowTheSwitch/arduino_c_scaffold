@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include "hserial.h"
 
 #include "main.h"
 
@@ -33,6 +34,10 @@ void configure(void)
   /* turn off surface mount LED on */
   PORTB &= ~_BV(PORTB5);
 
+
+  hs_init();
+  hs_start(0, 115200);
+
   /* enable interrupts. */
   sei();
 }
@@ -46,6 +51,7 @@ void task(void)
   {
     /* toggle the LED */
     PORTB ^= _BV(PORTB5);
+    hs_writeStr(0, "asdf");
 
     /* reset the tick */
     tick = 0;
