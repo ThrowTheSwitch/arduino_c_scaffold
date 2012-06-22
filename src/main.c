@@ -5,11 +5,20 @@
 
 #include "main.h"
 
+static uint16_t tick = 0;
+
 int main(void)
 {
   configure();
 
-  while(1) {;}
+  while(1)
+  {
+    int16_t c;
+    while ((c = hs_getChar(0)) != -1)
+    {
+      hs_writeChar(0, c);
+    }
+  }
 
   return 0;
 }
@@ -44,14 +53,11 @@ void configure(void)
 
 void task(void)
 {
-  static uint16_t tick = 0;
-
   /* toggle every thousand ticks */
   if (tick >= 1000)
   {
     /* toggle the LED */
     PORTB ^= _BV(PORTB5);
-    hs_writeStr(0, "asdf");
 
     /* reset the tick */
     tick = 0;

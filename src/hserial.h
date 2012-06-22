@@ -21,9 +21,9 @@
 #define RX_BUFFER_SIZE 128
 
 typedef struct _ring_buffer {
-  unsigned char buffer[RX_BUFFER_SIZE];
-  int head;
-  int tail;
+  uint8_t buffer[RX_BUFFER_SIZE];
+  int16_t head;
+  int16_t tail;
 } ring_buffer_t;
 
 typedef struct _hserial {
@@ -50,12 +50,12 @@ typedef struct _hserial {
 #endif
 
 void hs_init();                   // Initializes all available serial ports.
-void hs_start(const int port, unsigned long baud);  // Sets up a serial port.
-uint8_t hs_available(const int port);       // Checks whether data is available on the port
-void hs_flush(const int port);            // Flushes the contents on the serial port.
-int hs_getChar(const int port);           // Gets next character (rx) on serial port.
-void hs_writeChar(const int port, uint8_t c);   // Write a character (tx) on serial port.
-void hs_writeStr(const int port, const char str[]); // Write a string to serial port (tx).
+void hs_start(const int16_t port, uint32_t baud);  // Sets up a serial port.
+uint8_t hs_available(const int16_t port);       // Checks whether data is available on the port
+void hs_flush(const int16_t port);            // Flushes the contents on the serial port.
+int16_t hs_getChar(const int16_t port);           // Gets next character (rx) on serial port.
+void hs_writeChar(const int16_t port, uint8_t c);   // Write a character (tx) on serial port.
+void hs_writeStr(const int16_t port, const char str[]); // Write a string to serial port (tx).
 
 #endif /* HSERIAL_H_ */
 

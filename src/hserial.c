@@ -20,7 +20,7 @@
 #include "hserial.h"
 
 // function prototypes
-void hs_parseStr(const int port, const char *str);
+void hs_parseStr(const int16_t port, const char *str);
 inline void store_char(unsigned char c, ring_buffer_t *rx_buffer);
 
 // Initialize rx_buffer arrays accordingly.
@@ -141,7 +141,7 @@ void hs_init(){
 
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 
-void hs_start(const int port, unsigned long baud){
+void hs_start(const int16_t port, unsigned long baud){
   uint16_t const ubrr = F_CPU / (8 * baud) - 1;
 
   *Serial_[port].ubrrh = ubrr >> 8; 
@@ -152,12 +152,12 @@ void hs_start(const int port, unsigned long baud){
   sbi(*Serial_[port].ucsrb, Serial_[port].rxcie);
 }
 
-uint8_t hs_available(const int port){
+uint8_t hs_available(const int16_t port){
   return (RX_BUFFER_SIZE + Serial_[port].rx_buffer->head -
       Serial_[port].rx_buffer->tail) % RX_BUFFER_SIZE;
 }
 
-int hs_getChar(const int port){
+int16_t hs_getChar(const int16_t port){
   /*
    * If the head isn't ahead of the tail,
    * we don't have any characters
@@ -173,27 +173,27 @@ int hs_getChar(const int port){
   }
 }
 
-void hs_flush(const int port){
+void hs_flush(const int16_t port){
   Serial_[port].rx_buffer->head =
       Serial_[port].rx_buffer->tail;
 }
 
-void hs_writeChar(const int port, uint8_t c){
+void hs_writeChar(const int16_t port, uint8_t c){
   while (!((*Serial_[port].ucsra) & (1 << Serial_[port].udre)));
   *(Serial_[port].udr) = c;
 }
 
-void hs_writeStr(const int port, const char str[]){
+void hs_writeStr(const int16_t port, const char str[]){
   hs_parseStr(port, str);
 }
 
-void hs_parseStr(const int port, const char *str){
+void hs_parseStr(const int16_t port, const char *str){
     while (*str)
       hs_writeChar(port, *str++);
 }
 
 inline void store_char(unsigned char c, ring_buffer_t *rx_buffer){
-  int i = (rx_buffer->head + 1) % RX_BUFFER_SIZE;
+  int16_t i = (rx_buffer->head + 1) % RX_BUFFER_SIZE;
   // if we should be storing the received character into the location
   // just before the tail (meaning that the head would advance to the
   // current location of the tail), we're about to overflow the buffer
