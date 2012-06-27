@@ -69,12 +69,20 @@ $ brew install https://raw.github.com/larsimmisch/homebrew-alt/7d774c6b15dafdee6
 
 ### Linux
 
-Getting the environment up and running on Ubuntu Linux is quite simple. One
-need only install 4 packages. These are all supported in the Ubuntu package
+Getting the environment up and running on Linux is quite simple. One
+need only install some packages. These are all supported in the package
 manager. Open a terminal and run the following command:
+
+Debian/Ubuntu
 
 ```bash
 $ sudo apt-get install binutils-avr avr-libc avrdude gcc-avr
+```
+
+Archlinux
+
+```bash
+$ sudo pacman -S avrdude gcc-avr
 ```
 
 ## Building and Running the Sample Project
@@ -156,11 +164,26 @@ TBD
 
 ### Linux
 
-TBD
+Grep for "USB" ttys (virtual serial ports):
+
+    ls /dev/ | grep "USB"
+
+Usually:
+
+    /dev/ttyUSB0
+
 
 ## Exploring the Source Code
 
 TBD
+
+## AVR C Scaffold
+
+This works with others arduinos and barebones AVRs too.
+Tested on Duemilanove and the Blackwidow.
+
+Chips ATMEGA328p, ATMEGA32, ATMEGA64 and ATTiny85.
+Programmer USBASP.
 
 [WinAVR_DL]: http://sourceforge.net/projects/winavr/files/ "WinAVR Download"
 [rifw]: http://rubyinstaller.org/
