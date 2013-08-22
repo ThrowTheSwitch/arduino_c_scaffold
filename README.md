@@ -60,9 +60,10 @@ Once you're ready, here are the commands to install the needed tools:
 
 ```bash
 $ brew install avrdude
-$ brew install https://raw.github.com/larsimmisch/homebrew-alt/3a4f8ce4bcda88c25f4fa4ea3f42688a2ed03d12/avr/avr-binutils.rb
-$ brew install https://raw.github.com/larsimmisch/homebrew-alt/124853640317af04e11269c517d449dbd202773d/avr/avr-gcc.rb
-$ brew install https://raw.github.com/larsimmisch/homebrew-alt/7d774c6b15dafdee6ca518aff5e8368528d69ae0/avr/avr-libc.rb
+$ brew tap larsimmisch/avr
+$ brew install avr-binutils
+$ brew install avr-gcc
+$ brew install avr-libc
 ```
 
 **These are built from source and will take a while to complete.**
