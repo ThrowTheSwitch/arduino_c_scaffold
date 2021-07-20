@@ -60,7 +60,7 @@ Once you're ready, here are the commands to install the needed tools:
 
 ```bash
 $ brew install avrdude
-$ brew tap larsimmisch/avr
+$ brew tap osx-cross/avr
 $ brew install avr-binutils
 $ brew install avr-gcc
 $ brew install avr-libc
